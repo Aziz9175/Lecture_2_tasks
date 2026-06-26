@@ -1,0 +1,281 @@
+
+<h2 class="sr-only">Shopping Budget Calculator with pie chart and Excel export</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1.5rem 0;max-width:640px;font-family:var(--font-sans)}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.hicon{width:36px;height:36px;border-radius:var(--border-radius-md);background:#EAF3DE;display:flex;align-items:center;justify-content:center}
+.hicon i{font-size:20px;color:#3B6D11}
+h2.title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.budget-box{background:#EAF3DE;border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;border:0.5px solid #C0DD97}
+.budget-row{display:flex;align-items:center;gap:10px}
+.blabel{font-size:13px;color:#3B6D11;font-weight:500;white-space:nowrap}
+.binput-wrap{display:flex;align-items:center;flex:1;background:var(--color-background-primary);border:0.5px solid #97C459;border-radius:var(--border-radius-md);overflow:hidden}
+.curr{font-size:14px;font-weight:500;color:#3B6D11;padding:0 10px}
+.binput-wrap input{border:none;outline:none;background:transparent;font-size:15px;color:var(--color-text-primary);padding:8px 10px 8px 0;width:100%;font-family:var(--font-sans)}
+.setbtn{background:#3B6D11;color:#EAF3DE;border:none;border-radius:var(--border-radius-md);padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:var(--font-sans)}
+.setbtn:hover{background:#27500A}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1.25rem}
+.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.85rem 1rem}
+.sc-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.sc-val{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.sc-val.g{color:#3B6D11}.sc-val.r{color:#A32D2D}.sc-val.w{color:#854F0B}
+.prog-wrap{margin-bottom:1.25rem}
+.prog-bg{background:var(--color-background-secondary);border-radius:100px;height:10px;overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.prog-fill{height:100%;border-radius:100px;transition:width .3s,background .3s;background:#639922}
+.prog-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);margin-top:5px}
+.warn{background:#FAECE7;border:0.5px solid #F0997B;border-radius:var(--border-radius-md);padding:10px 14px;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px}
+.warn i{font-size:18px;color:#993C1D;flex-shrink:0}
+.warn span{font-size:13px;color:#712B13;font-weight:500}
+.warn.amber{background:#FAEEDA;border-color:#EF9F27}
+.warn.amber i{color:#854F0B}
+.warn.amber span{color:#633806}
+.add-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem}
+.add-box h3{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px}
+.add-row{display:flex;gap:8px;align-items:center}
+.add-row input[type=text]{flex:2;font-size:14px;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);outline:none}
+.add-row input[type=number]{flex:1;font-size:14px;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);outline:none}
+.addbtn{background:#3B6D11;color:#EAF3DE;border:none;border-radius:var(--border-radius-md);padding:8px 14px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-sans);display:flex;align-items:center;gap:5px}
+.addbtn:hover{background:#27500A}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.items-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.items-box h3{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.item-row{display:flex;align-items:center;gap:8px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 10px;margin-bottom:6px}
+.idot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.iname{flex:1;font-size:13px;color:var(--color-text-primary)}
+.iprice{font-size:13px;font-weight:500;color:#3B6D11;white-space:nowrap}
+.delbtn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);display:flex;align-items:center;padding:2px;border-radius:4px;font-size:15px}
+.delbtn:hover{color:#A32D2D;background:#FCEBEB}
+.empty{text-align:center;padding:1.2rem;color:var(--color-text-secondary);font-size:13px}
+.bottom-row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.clearbtn{background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 14px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans)}
+.clearbtn:hover{background:var(--color-background-secondary)}
+.exportbtn{background:#185FA5;color:#E6F1FB;border:none;border-radius:var(--border-radius-md);padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-sans);display:flex;align-items:center;gap:6px}
+.exportbtn:hover{background:#0C447C}
+.chart-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.chart-box h3{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.chart-placeholder{display:flex;align-items:center;justify-content:center;height:180px;color:var(--color-text-secondary);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--color-text-secondary)}
+.leg-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="hicon"><i class="ti ti-shopping-cart" aria-hidden="true"></i></div>
+    <h2 class="title">Shopping budget calculator</h2>
+  </div>
+
+  <div class="budget-box">
+    <div class="budget-row">
+      <span class="blabel">My budget</span>
+      <div class="binput-wrap">
+        <span class="curr">PKR</span>
+        <input type="number" id="budgetInput" placeholder="Enter budget..." min="0" />
+      </div>
+      <button class="setbtn" onclick="setBudget()">Set</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="sc"><div class="sc-label">Budget</div><div class="sc-val g" id="statBudget">—</div></div>
+    <div class="sc"><div class="sc-label">Spent</div><div class="sc-val" id="statSpent">PKR 0</div></div>
+    <div class="sc"><div class="sc-label">Remaining</div><div class="sc-val g" id="statRemaining">—</div></div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-labels"><span id="progPct">0% used</span><span id="progItems">0 items</span></div>
+  </div>
+
+  <div id="warnBox" style="display:none" class="warn">
+    <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+    <span id="warnText"></span>
+  </div>
+
+  <div class="add-box">
+    <h3>Add an item</h3>
+    <div class="add-row">
+      <input type="text" id="itemName" placeholder="Item name (e.g. Milk)" />
+      <input type="number" id="itemPrice" placeholder="Price (PKR)" min="0" />
+      <button class="addbtn" onclick="addItem()"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="items-box">
+      <h3>Items added</h3>
+      <div id="itemList"><div class="empty">No items yet.</div></div>
+      <div class="bottom-row">
+        <button class="clearbtn" onclick="clearAll()">Clear all</button>
+        <button class="exportbtn" onclick="exportExcel()"><i class="ti ti-download" aria-hidden="true"></i> Export Excel</button>
+      </div>
+    </div>
+    <div class="chart-box">
+      <h3>Spending breakdown</h3>
+      <div style="position:relative;width:100%;height:180px">
+        <canvas id="pieChart" role="img" aria-label="Pie chart showing spending by item"></canvas>
+      </div>
+      <div class="legend" id="pieLegend"><div class="empty" style="padding:.5rem 0">Add items to see chart.</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+let budget = 0;
+let items = [];
+let pieChart = null;
+
+const PIE_COLORS = ['#639922','#1D9E75','#378ADD','#7F77DD','#D85A30','#D4537E','#BA7517','#888780','#3B6D11','#185FA5'];
+
+function fmt(n){ return 'PKR ' + Math.round(n).toLocaleString(); }
+
+function setBudget(){
+  const v = parseFloat(document.getElementById('budgetInput').value);
+  if(!v||v<=0) return;
+  budget = v;
+  update();
+}
+
+function addItem(){
+  const name = document.getElementById('itemName').value.trim();
+  const price = parseFloat(document.getElementById('itemPrice').value);
+  if(!name||!price||price<=0) return;
+  items.push({id: Date.now(), name, price});
+  document.getElementById('itemName').value='';
+  document.getElementById('itemPrice').value='';
+  document.getElementById('itemName').focus();
+  update();
+}
+
+function removeItem(id){
+  items = items.filter(i=>i.id!==id);
+  update();
+}
+
+function clearAll(){
+  items=[];
+  update();
+}
+
+function update(){
+  const spent = items.reduce((s,i)=>s+i.price,0);
+  const remaining = budget - spent;
+  const pct = budget>0 ? Math.min((spent/budget)*100,100) : 0;
+
+  document.getElementById('statBudget').textContent = budget>0 ? fmt(budget) : '—';
+  document.getElementById('statSpent').textContent = fmt(spent);
+
+  const remEl = document.getElementById('statRemaining');
+  if(budget>0){
+    remEl.textContent = fmt(Math.abs(remaining));
+    remEl.className = 'sc-val ' + (remaining<0?'r':remaining<budget*0.1?'w':'g');
+  } else {
+    remEl.textContent='—'; remEl.className='sc-val g';
+  }
+
+  const fill = document.getElementById('progFill');
+  fill.style.width = pct.toFixed(1)+'%';
+  fill.style.background = pct>=100?'#A32D2D':pct>=85?'#BA7517':'#639922';
+
+  document.getElementById('progPct').textContent = Math.round(pct)+'% used';
+  document.getElementById('progItems').textContent = items.length+' item'+(items.length!==1?'s':'');
+
+  const wb = document.getElementById('warnBox');
+  const wt = document.getElementById('warnText');
+  if(budget>0 && spent>budget){
+    wb.style.display='flex'; wb.className='warn';
+    wt.textContent='You have exceeded your budget by '+ fmt(spent-budget).replace('PKR ','PKR ')+'!';
+  } else if(budget>0 && pct>=85){
+    wb.style.display='flex'; wb.className='warn amber';
+    wt.textContent='Heads up — you have used '+Math.round(pct)+'% of your budget.';
+  } else {
+    wb.style.display='none';
+  }
+
+  const list = document.getElementById('itemList');
+  if(items.length===0){
+    list.innerHTML='<div class="empty">No items yet.</div>';
+  } else {
+    list.innerHTML = items.map((it,idx)=>`
+      <div class="item-row">
+        <div class="idot" style="background:${PIE_COLORS[idx%PIE_COLORS.length]}"></div>
+        <span class="iname">${it.name}</span>
+        <span class="iprice">PKR ${Math.round(it.price).toLocaleString()}</span>
+        <button class="delbtn" onclick="removeItem(${it.id})" aria-label="Remove ${it.name}">
+          <i class="ti ti-trash" aria-hidden="true"></i>
+        </button>
+      </div>`).join('');
+  }
+
+  updateChart(spent);
+}
+
+function updateChart(spent){
+  const canvas = document.getElementById('pieChart');
+  const legend = document.getElementById('pieLegend');
+
+  if(items.length===0){
+    if(pieChart){pieChart.destroy();pieChart=null;}
+    legend.innerHTML='<div class="empty" style="padding:.5rem 0">Add items to see chart.</div>';
+    return;
+  }
+
+  const labels = items.map(i=>i.name);
+  const data = items.map(i=>i.price);
+  const colors = items.map((_,idx)=>PIE_COLORS[idx%PIE_COLORS.length]);
+
+  if(pieChart){
+    pieChart.data.labels=labels;
+    pieChart.data.datasets[0].data=data;
+    pieChart.data.datasets[0].backgroundColor=colors;
+    pieChart.update();
+  } else {
+    pieChart = new Chart(canvas,{
+      type:'doughnut',
+      data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:1,borderColor:'#fff'}]},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{
+          label:(ctx)=>{
+            const pct = spent>0?((ctx.parsed/spent)*100).toFixed(1):0;
+            return ` ${ctx.label}: PKR ${Math.round(ctx.parsed).toLocaleString()} (${pct}%)`;
+          }
+        }}}
+      }
+    });
+  }
+
+  legend.innerHTML = items.map((it,idx)=>{
+    const pct = spent>0?((it.price/spent)*100).toFixed(0):0;
+    return `<span class="leg-item"><span class="leg-swatch" style="background:${PIE_COLORS[idx%PIE_COLORS.length]}"></span>${it.name} ${pct}%</span>`;
+  }).join('');
+}
+
+function exportExcel(){
+  if(items.length===0){alert('Add some items first.');return;}
+  const spent = items.reduce((s,i)=>s+i.price,0);
+  const remaining = budget>0?budget-spent:null;
+
+  const rows = [
+    ['#','Item Name','Price (PKR)','% of Spending'],
+    ...items.map((it,i)=>[i+1, it.name, Math.round(it.price), spent>0?((it.price/spent)*100).toFixed(1)+'%':'-']),
+    [],
+    ['','Total Spent', Math.round(spent),''],
+    ['','Budget', budget>0?Math.round(budget):'Not set',''],
+    ['','Remaining', remaining!==null?Math.round(remaining):'—',''],
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:25},{wch:15},{wch:15}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'Shopping List',ws);
+  XLSX.writeFile(wb,'shopping-budget.xlsx');
+}
+
+document.getElementById('budgetInput').addEventListener('keydown',e=>{if(e.key==='Enter')setBudget();});
+document.getElementById('itemPrice').addEventListener('keydown',e=>{if(e.key==='Enter')addItem();});
+</script>

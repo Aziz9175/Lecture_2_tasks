@@ -1,0 +1,6 @@
+{
+  "name": "Snake Game",
+  "description": "A polished arcade-style retro-modern Neon Snake Game with sound effects, multiple modes, power-ups, and interactive particles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
